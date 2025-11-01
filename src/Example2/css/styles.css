@@ -83,6 +83,12 @@
   cursor: default;
 }
 
+/* Brief highlight when a pad is triggered by keyboard or click */
+.padButton.active {
+  box-shadow: 0 0 8px 2px rgba(128, 200, 128, 0.9) inset;
+  background: #2a6;
+}
+
 /* Make the waveform wrapper use the canvas size we expect */
 .wrapper {
     position: relative;

@@ -33,6 +33,39 @@ let mousePos = { x: 0, y: 0 }
 // index of the currently active sound (shared between handlers and animate)
 let activeSoundIndex = 0;
 
+// Keyboard mapping: key -> slot index
+const KEY_TO_SLOT = {
+    // top row (visual): 12,13,14,15 mapped to keys 1..4
+    '&': 12, 'é': 13, '"': 14, "'": 15,
+    // second row: a,z,e,r -> 8..11
+    'a': 8, 'z': 9, 'e': 10, 'r': 11,
+    // third row: q,s,d,f -> 4..7
+    'q': 4, 's': 5, 'd': 6, 'f': 7,
+    // bottom row: w,x,c,v -> 0..3
+    'w': 0, 'x': 1, 'c': 2, 'v': 3
+};
+
+// Trigger pad action programmatically for a slot (play + redraw + flash button)
+function triggerPad(slot) {
+    if (typeof slot !== 'number' || slot < 0 || slot > 15) return;
+    if (!sounds[slot]) return; // no sound assigned
+
+    activeSoundIndex = slot;
+    try { sounds[activeSoundIndex].play(ctx); } catch (e) { /* ignore */ }
+
+    // redraw waveform for the selected sound
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    if (sounds[activeSoundIndex]) sounds[activeSoundIndex].waveForm.drawWave(0, canvas.height);
+
+    // flash the corresponding button
+    const btn = document.querySelector(`#buttons .padButton[data-slot='${slot}']`);
+    if (btn) {
+        btn.classList.add('active');
+        setTimeout(() => btn.classList.remove('active'), 120);
+    }
+}
+
 window.onload = async function init() {
     ctx = new AudioContext();
 
@@ -44,15 +77,6 @@ window.onload = async function init() {
     // Fetch first 5 presets from API and populate select
     const presetSelect = document.querySelector('#presetSelect');
     const buttonsContainer = document.querySelector('#buttons');
-
-    for (let i = 0; i < 16; i++) {
-        const button = document.createElement('button');
-        button.className = 'padButton';
-        button.disabled = true;
-        button.textContent = '';
-        button.dataset.slot = i;
-        buttonsContainer.appendChild(button);
-    }
 
     // initialize sounds array with 16 null slots so trimbars handlers won't error
     sounds = new Array(16).fill(null);
@@ -124,6 +148,20 @@ window.onload = async function init() {
 
     // start the animation loop for drawing the trim bars
     requestAnimationFrame(animate);
+
+    // keyboard handling: map keys to pad slots
+    window.addEventListener('keydown', (e) => {
+        // ignore typing into inputs/textareas or contenteditable elements
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+
+        const key = (e.key || '').toLowerCase();
+        const slot = KEY_TO_SLOT[key];
+        if (typeof slot === 'number') {
+            e.preventDefault();
+            triggerPad(slot);
+        }
+    });
 };
 
 // Animation loop for drawing the trim bars
