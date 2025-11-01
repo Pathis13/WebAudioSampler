@@ -14,7 +14,6 @@ import { loadAndDecodeSound } from './soundutils.js';
 let ctx;
 
 const API_BASE = 'http://localhost:3000';
-// const API_BASE_PRESETS = 'http://localhost:3000/presets';
 
 // small helper to build absolute URL for a sample returned by the API
 function resolveSampleUrl(url) {
@@ -34,7 +33,6 @@ let mousePos = { x: 0, y: 0 }
 // index of the currently active sound (shared between handlers and animate)
 let activeSoundIndex = 0;
 
-
 window.onload = async function init() {
     ctx = new AudioContext();
 
@@ -47,6 +45,18 @@ window.onload = async function init() {
     const presetSelect = document.querySelector('#presetSelect');
     const buttonsContainer = document.querySelector('#buttons');
 
+    for (let i = 0; i < 16; i++) {
+        const button = document.createElement('button');
+        button.className = 'padButton';
+        button.disabled = true;
+        button.textContent = '';
+        button.dataset.slot = i;
+        buttonsContainer.appendChild(button);
+    }
+
+    // initialize sounds array with 16 null slots so trimbars handlers won't error
+    sounds = new Array(16).fill(null);
+
     let presets = [];
     try {
         const resp = await fetch(`${API_BASE}/api/presets`);
@@ -56,25 +66,25 @@ window.onload = async function init() {
         presets = [];
     }
 
-    // keep only up to 5 names
-    const firstFive = Array.isArray(presets) ? presets.slice(0, 5) : [];
     // populate select
     presetSelect.innerHTML = '<option value="">--Choisir un preset--</option>';
-    firstFive.forEach((p, i) => {
+    presets.forEach((p, i) => {
         const opt = document.createElement('option');
         opt.value = String(i);
         opt.textContent = p.name || p.slug || `Preset ${i+1}`;
         presetSelect.appendChild(opt);
     });
 
-    // when user selects a preset, load its samples and create buttons
+    // when user selects a preset, load its samples and update existing buttons
     presetSelect.onchange = async function (e) {
         const idx = Number(this.value);
-        if (Number.isNaN(idx) || !firstFive[idx]) {
-            buttonsContainer.innerHTML = '';
+        if (Number.isNaN(idx) || !presets[idx]) {
+            // disable and clear all pre-created buttons
+            const padButtons = buttonsContainer.querySelectorAll('.padButton');
+            padButtons.forEach(b => { b.disabled = true; b.textContent = ''; b.onclick = null; });
             return;
         }
-        const preset = firstFive[idx];
+        const preset = presets[idx];
         await loadPresetSamplesAndCreateButtons(preset, buttonsContainer, canvas, canvasOverlay, ctx);
     };
     // activeSoundIndex is declared at module scope; default already 0
@@ -135,10 +145,9 @@ function animate() {
 
 // Load and decode all samples of a preset, create Sound objects and buttons
 async function loadPresetSamplesAndCreateButtons(preset, container, canvas, canvasOverlay, ctx) {
-    // clear previous
-    sounds = [];
+    // prepare previous state
+    sounds = new Array(16).fill(null);
     activeSoundIndex = 0;
-    container.innerHTML = '';
 
     const samples = Array.isArray(preset?.samples) ? preset.samples : [];
     if (samples.length === 0) {
@@ -162,37 +171,61 @@ async function loadPresetSamplesAndCreateButtons(preset, container, canvas, canv
 
     const results = await Promise.all(decodePromises);
     //todo add /preset to the url like this :http://localhost:3000/presets/808/Snare%20808%201.wav
-    // create UI buttons for each successfully decoded sample
+    // Reset sounds to a fixed-size array of 16 slots and keep names for labels
+    const maxSlots = 16;
+    const slotSounds = new Array(maxSlots).fill(null);
+    const slotNames = new Array(maxSlots).fill(null);
+
+    // Fill slotSounds with decoded sounds (keep only the first 16 samples)
     results.forEach((r, index) => {
+        if (index >= maxSlots) return; // ignore extra samples
         if (r.buffer) {
             const wf = new WaveformDrawer();
-            const tb = new TrimbarsDrawer(canvasOverlay, 100, 200);
+            const tb = new TrimbarsDrawer(canvasOverlay, 0, canvas.width);
             const sound = new Sound(wf, tb, r.buffer, canvas);
             sound.init('#83E83E');
-            sounds.push(sound);
-            const currentIndex = sounds.length - 1;
+            slotSounds[index] = sound; // store Sound instance so trimBars remain available
+            slotNames[index] = r.name || (r.url ? r.url.split('/').pop() : `Sample ${index+1}`);
+        } else {
+            slotSounds[index] = null;
+            slotNames[index] = null;
+        }
+    });
 
-            const button = document.createElement('button');
-            button.className = 'playButton';
-            const label = r.name || (r.url ? r.url.split('/').pop() : `Sample ${index+1}`);
+    // Replace global sounds with slotSounds (so other code can access by index)
+    sounds = slotSounds;
+
+    // Build DOM order: rows from top to bottom, each row left-to-right, but slots are
+    // numbered bottom-to-top. That same order is used in the HTML so the NodeList
+    // order of `.padButton` matches the visual ordering.
+    const domOrder = [];
+    for (let row = 3; row >= 0; row--) {
+        for (let col = 0; col < 4; col++) {
+            domOrder.push(row * 4 + col);
+        }
+    }
+
+    // Update existing pre-created buttons instead of recreating them
+    const padButtons = container.querySelectorAll('.padButton');
+    padButtons.forEach((button, i) => {
+        const slotIndex = domOrder[i];
+        const slot = slotSounds[slotIndex];
+        // remove previous handler
+        button.onclick = null;
+        if (slot) {
+            const label = slotNames[slotIndex] || `Sample ${slotIndex+1}`;
+            button.disabled = false;
             button.textContent = `▶ ${label}`;
-            container.appendChild(button);
             button.onclick = () => {
-                activeSoundIndex = currentIndex;
-                // play the active sound
-                sounds[activeSoundIndex].play(ctx);
-                // redraw waveform for the selected sound
+                activeSoundIndex = slotIndex;
+                if (sounds[activeSoundIndex]) sounds[activeSoundIndex].play(ctx);
                 const context = canvas.getContext('2d');
                 context.clearRect(0, 0, canvas.width, canvas.height);
-                sounds[activeSoundIndex].waveForm.drawWave(0, canvas.height);
+                if (sounds[activeSoundIndex]) sounds[activeSoundIndex].waveForm.drawWave(0, canvas.height);
             };
         } else {
-            // show error badge for this sample
-            const errBtn = document.createElement('button');
-            errBtn.disabled = true;
-            const label = r.name || (r.url ? r.url.split('/').pop() : `Sample ${index+1}`);
-            errBtn.textContent = `✖ ${label}`;
-            container.appendChild(errBtn);
+            button.disabled = true;
+            button.textContent = '';
         }
     });
 }
