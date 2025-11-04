@@ -1,7 +1,8 @@
 # WebAudioSampler
 
-`cd .\src\ExampleRESTEndpointCorrige\`
-
+Lancer l'api sur le port 3000
+`cd src/api`
+`npm i`
 `npm run dev`
 
-open \src\Example2\index.html with live server
+Lancer \src\index.html avec live server
