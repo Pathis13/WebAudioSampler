@@ -95,6 +95,9 @@ window.onload = async function init() {
         ctx
     });
 
+    // create buttons + progress bars immediately so they are always visible
+    gui.prepareForLoading();
+
     let presets = [];
     try {
         const resp = await fetch(`${API_BASE}/api/presets`);
@@ -124,8 +127,12 @@ window.onload = async function init() {
             return;
         }
         const preset = presets[idx];
-        // engine loads & decodes samples in parallel and returns results
-        const decodedResults = await engine.loadPresetSamples(preset);
+        // prepare GUI for loading so progress bars exist
+        gui.prepareForLoading(preset);
+        // engine loads & decodes samples in parallel and reports progress to GUI
+        const decodedResults = await engine.loadPresetSamples(preset, (index, pct) => {
+            try { gui.updateProgress(index, pct); } catch (e) { /* ignore UI errors */ }
+        });
         // GUI builds Sound instances, updates `sounds` array and buttons
         gui.buildFromDecoded(decodedResults, preset);
     };

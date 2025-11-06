@@ -12,28 +12,73 @@ export default class SamplerEngine {
 
     // Load and decode all samples of a preset in parallel.
     // Returns an array of result objects: { buffer, url, name } or { err, url, name }
-    async loadPresetSamples(preset) {
+    // onProgress is an optional callback (index, percent)
+    async loadPresetSamples(preset, onProgress) {
         const samples = Array.isArray(preset?.samples) ? preset.samples : [];
         if (samples.length === 0) {
             this.results = [];
             return this.results;
         }
-
-        const decodePromises = samples.map(async (s) => {
-            const url = this.resolveUrl(s.url || s);
-            if (!url) return { err: 'no-url', url: null, name: s.name || null };
-            try {
-                const resp = await fetch(url);
-                const arrayBuffer = await resp.arrayBuffer();
-                const decoded = await this.ctx.decodeAudioData(arrayBuffer);
-                return { buffer: decoded, url, name: s.name };
-            } catch (e) {
-                return { err: e, url, name: s.name };
-            }
-        });
+        const decodePromises = samples.map((s, idx) => this._loadAndDecodeSample(s, idx, onProgress));
 
         this.results = await Promise.all(decodePromises);
         return this.results;
+    }
+
+    async _loadAndDecodeSample(s, index, onProgress) {
+        const url = this.resolveUrl(s.url || s);
+        const name = s.name || null;
+        if (!url) {
+            if (typeof onProgress === 'function') onProgress(index, -1);
+            return { err: 'no-url', url: null, name };
+        }
+        try {
+            const resp = await fetch(url);
+
+            // If the response supports streaming, read chunks and report download progress
+            if (resp.body && resp.headers) {
+                const contentLengthHeader = resp.headers.get('content-length');
+                const total = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
+                const reader = resp.body.getReader();
+                let received = 0;
+                const chunks = [];
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                    received += value.length;
+                    // Report download progress scaled to 0..70 (download portion)
+                    if (typeof onProgress === 'function') {
+                        const pct = total ? Math.round((received / total) * 70) : Math.min(70, Math.round((received / (received + 100000)) * 70));
+                        onProgress(index, pct);
+                    }
+                }
+                // concat chunks
+                const buffer = new Uint8Array(chunks.reduce((acc, c) => acc + c.length, 0));
+                let offset = 0;
+                for (const chunk of chunks) {
+                    buffer.set(chunk, offset);
+                    offset += chunk.length;
+                }
+                const arrayBuffer = buffer.buffer;
+                // Decoding started
+                if (typeof onProgress === 'function') onProgress(index, 80);
+                const decoded = await this.ctx.decodeAudioData(arrayBuffer);
+                if (typeof onProgress === 'function') onProgress(index, 100);
+                return { buffer: decoded, url, name };
+            }
+
+            // Fallback: read entire arrayBuffer (no streaming)
+            if (typeof onProgress === 'function') onProgress(index, 30);
+            const arrayBuffer = await resp.arrayBuffer();
+            if (typeof onProgress === 'function') onProgress(index, 80);
+            const decoded = await this.ctx.decodeAudioData(arrayBuffer);
+            if (typeof onProgress === 'function') onProgress(index, 100);
+            return { buffer: decoded, url, name };
+        } catch (e) {
+            if (typeof onProgress === 'function') onProgress(index, -1);
+            return { err: e, url, name };
+        }
     }
 
     // Play a decoded buffer by its index in the results array. Optionally provide

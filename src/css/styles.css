@@ -39,12 +39,14 @@
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  width: max-content;
+  /* width: max-content; */
+  width: 660px;
   border-radius: 15px;
 }
 
 #leftControls {
   width: 320px; /* contains the 4x4 grid */
+  height: 330px
 }
 
 #rightPane {
@@ -61,7 +63,9 @@
 
 .padButton {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  height: 48px;
+  height: 62px;
   font-size: 13px;
   background: #6de7ff;
   color: #000000;
@@ -71,6 +75,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 15%;
+
+  /* display: block; */
 }
 .padButton:focus:active {
   background: #00bfff;
@@ -78,8 +84,8 @@
 
 .padButton:disabled {
   /* background: #111; */
-  opacity: 80%;
-  border-style: dashed;
+  /* opacity: 80%;
+  border-style: dashed; */
   cursor: default;
 }
 
@@ -87,6 +93,32 @@
 .padButton.active {
   box-shadow: 0 0 8px 2px rgba(128, 200, 128, 0.9) inset;
   background: #2a6;
+}
+
+/* wrapper for button + progress bar */
+.padWrapper {
+  display: inline-block;
+  text-align: center;
+  /* width: 120px; */
+  width: 62px;
+  margin: 6px;
+}
+
+.pad-progress {
+  position: relative;
+  height: 6px;
+  background: #222;
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.pad-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  transition: width 200ms linear, background 200ms linear;
+  border-radius: 3px;
 }
 
 /* Make the waveform wrapper use the canvas size we expect */
@@ -104,4 +136,8 @@
   position: relative;
   top: 50px;
   text-align: center;
+}
+
+#presetSelect{
+  border-radius: 5px;
 }
