@@ -108,7 +108,8 @@ window.onload = async function init() {
     }
 
     // populate select
-    presetSelect.innerHTML = '<option value="">--Choisir un preset--</option>';
+    // First option is a "clear / reset" choice (value -1) which will disable and clear all pads
+    presetSelect.innerHTML = '<option value="-1">--Aucun (Réinitialiser)--</option>';
     presets.forEach((p, i) => {
         const opt = document.createElement('option');
         opt.value = String(i);
@@ -120,10 +121,27 @@ window.onload = async function init() {
     // then let the GUI build visuals and wire buttons
     presetSelect.onchange = async function (e) {
         const idx = Number(this.value);
-        if (Number.isNaN(idx) || !presets[idx]) {
-            // disable and clear all pre-created buttons
-            const padButtons = buttonsContainer.querySelectorAll('.padButton');
-            padButtons.forEach(b => { b.disabled = true; b.textContent = ''; b.onclick = null; });
+        // If idx < 0 (our "clear" option) or invalid, reset UI to initial empty state
+        if (idx < 0 || Number.isNaN(idx) || !presets[idx]) {
+            // Recreate buttons and progress bars in the initial (empty) state
+            // prepareForLoading clears the sounds array and recreates the pad elements
+            try { gui.prepareForLoading(); } catch (e) { /* fallback to manual clear */ }
+
+            // Clear waveform canvas and overlay so previous waveform/trim bars disappear
+            try {
+                if (canvas) {
+                    const ctx2d = canvas.getContext('2d');
+                    ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+                }
+                if (canvasOverlay) {
+                    const ctxOverlay = canvasOverlay.getContext('2d');
+                    ctxOverlay.clearRect(0, 0, canvasOverlay.width, canvasOverlay.height);
+                }
+            } catch (e) { /* ignore if canvases not ready */ }
+
+            // reset active index
+            window.activeSoundIndex = 0;
+
             return;
         }
         const preset = presets[idx];
@@ -180,6 +198,10 @@ window.onload = async function init() {
         const active = document.activeElement;
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
 
+        // Ignore repeated keydown events generated while a key is held down
+        // so that holding the key doesn't retrigger the sample repeatedly.
+        // Modern browsers set e.repeat === true for auto-repeated keydown events.
+        if (e.repeat) return;
         const key = (e.key || '').toLowerCase();
         const slot = KEY_TO_SLOT[key];
         if (typeof slot === 'number') {

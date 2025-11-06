@@ -40,7 +40,7 @@ export default class SamplerGUI {
             button.className = 'padButton';
             button.setAttribute('data-slot', String(slotIndex));
             button.disabled = true;
-            button.textContent = '';
+            // button.textContent = '';
 
             const bar = document.createElement('div');
             bar.className = 'pad-progress';
