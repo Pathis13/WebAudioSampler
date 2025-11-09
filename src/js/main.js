@@ -92,7 +92,8 @@ window.onload = async function init() {
         TrimbarsDrawer,
         Sound,
         sounds,
-        ctx
+        ctx,
+        KEY_TO_SLOT
     });
 
     // create buttons + progress bars immediately so they are always visible

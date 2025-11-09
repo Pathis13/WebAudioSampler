@@ -102,6 +102,7 @@
   /* width: 120px; */
   width: 62px;
   margin: 6px;
+  position: relative;
 }
 
 .pad-progress {
@@ -140,4 +141,11 @@
 
 #presetSelect{
   border-radius: 5px;
+}
+
+.key {
+    position: absolute;
+    bottom: 3px;
+    left: 6px;
+    font-size: x-small;
 }

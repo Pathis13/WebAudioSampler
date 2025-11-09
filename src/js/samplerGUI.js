@@ -3,7 +3,7 @@
 // the engine and a reference to the shared `sounds` array used by the rest of the app.
 
 export default class SamplerGUI {
-    constructor({ canvas, canvasOverlay, buttonsContainer, WaveformDrawer, TrimbarsDrawer, Sound, sounds, ctx }) {
+    constructor({ canvas, canvasOverlay, buttonsContainer, WaveformDrawer, TrimbarsDrawer, Sound, sounds, ctx, KEY_TO_SLOT}) {
         this.canvas = canvas;
         this.canvasOverlay = canvasOverlay;
         this.buttonsContainer = buttonsContainer;
@@ -13,6 +13,7 @@ export default class SamplerGUI {
         // shared array from main.js where animation and keyboard handlers read sounds
         this.sounds = sounds;
         this.ctx = ctx;
+        this.KEY_TO_SLOT = KEY_TO_SLOT
     }
 
     // Prepare UI for loading: create/ensure progress bars for each pad/button
@@ -48,9 +49,15 @@ export default class SamplerGUI {
             const fill = document.createElement('div');
             fill.className = 'pad-progress-fill';
 
+            const key = document.createElement('div');
+            key.className = 'key';
+
+            key.innerHTML = Object.keys(this.KEY_TO_SLOT).find(k => this.KEY_TO_SLOT[k] === slotIndex) || '';
+
             bar.appendChild(fill);
             wrap.appendChild(button);
             wrap.appendChild(bar);
+            wrap.appendChild(key);
             this.buttonsContainer.appendChild(wrap);
         });
     }
@@ -125,7 +132,7 @@ export default class SamplerGUI {
                 const label = slotNames[slotIndex] || `Sample ${slotIndex+1}`;
                 button.disabled = false;
                 // clear text and set label with play icon
-                button.textContent = `▶ ${label}`;
+                button.textContent = ` ${label}`;
                 // reattach progress bar after text reset
                 if (bar) {
                     // ensure the bar shows full for successfully decoded sounds
