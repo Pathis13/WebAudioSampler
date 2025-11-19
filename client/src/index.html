@@ -3,20 +3,15 @@
     <meta charset="utf-8">
     <title>Audio sampler</title>
     <link rel="stylesheet" href="css/styles.css">
-    <!-- type="module" is necessary if the main.js file is using import / export (aka ES/JS modules)
-     Try removing it and see what happens in the debug console! -->
-    <script src="js/main.js" type="module"></script>
+    <script src="js/main2.js" type="module"></script>
 </head>
 
 <body>
     <div id="controls">
         <div id="leftControls">
-            <div id="buttons">
-                <!-- Buttons will be created dynamically by samplerGUI.prepareForLoading() -->
-            </div>
+            <div id="buttons"></div>
         </div>
         
-        <!-- Waveform area placed on the right of the pad grid -->
         <div id="rightPane">
             <div class="wrapper">
                 <canvas id="myCanvas"></canvas>
@@ -25,11 +20,12 @@
             <div id="presetChooser">
             <label for="presetSelect">Choisir un preset :</label>
                 <select id="presetSelect">
-                    <option value="">--Chargement--</option>
+                    <option value="">Blank</option>
                 </select>
             </div>
         </div>
     </div>
+    <button id="headless">headless</button>
 </body>
 
 </html>
