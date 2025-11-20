@@ -13,6 +13,7 @@ Un sampler audio qui utilise une api pour récupérer les sons
 - Wave form qui permet de voir les ondes sonores    
 - Trim bars qui permettent de contrôler la longueur de chaque son  
 - Possibilité d'interagir avec le pad via les touches de clavier (1234  AZER  QSDF  WXCV)  
+- Bouton pour charger un preset et jouer un son sans interface graphique
 
 ## Utilisation  
 
