@@ -1,21 +1,16 @@
-import { loadPresetSamples } from './samplerEngine2.js';
-import { playSound } from './soundutils.js';
-
-// The AudioContext object is the main "entry point" into the Web Audio API
-let ctx;
+import { samplerGUI } from './samplerGUI2.js';
 
 const API_BASE = 'http://localhost:3000';
 
-// let sounds = []
 let decodedSounds = []
 
 window.activeSoundIndex = 0;
 
+
 window.onload = async function init() {
-    ctx = new AudioContext();
-    
-    // sounds = new Array(16).fill(null);
-    
+    const gui = new samplerGUI();
+    const engine = gui.getEngine();
+
     const presetSelect = document.querySelector('#presetSelect');
 
 
@@ -29,6 +24,7 @@ window.onload = async function init() {
     }
 
 
+    // preset select
     presetSelect.innerHTML = '<option value="-1">Blank</option>';
     presets.forEach((p, i) => {
         const opt = document.createElement('option');
@@ -37,19 +33,27 @@ window.onload = async function init() {
         presetSelect.appendChild(opt);
     });
 
+    // load preset and show name on buttons when select option
+    let presetSamples = []
     presetSelect.onchange = async function (e) {
+        gui.clearButtons()
         if (this.value >= 0){
-            decodedSounds = await loadPresetSamples(presets[this.value], ctx)
-            // playSound(ctx, decodedSounds[0], 0, decodedSounds[0].duration);
+            decodedSounds = await engine.loadPresetSamples(presets[this.value])
+            presetSamples = presets[this.value].samples
+            gui.nameOnButtons(presetSamples)
+            gui.createSounds(decodedSounds);
+            gui.bindButtonEvents()
         }
     }
+    
+
 
     
     
     // bouton pour test sans interface qui charge le premier preset et joue le kick
     let headlessBtn = document.getElementById("headless")
     headlessBtn.addEventListener('click', async () => {
-        decodedSounds = await loadPresetSamples(presets[0], ctx)
-        playSound(ctx, decodedSounds[0], 0, decodedSounds[0].duration);
+        decodedSounds = await engine.loadPresetSamples(presets[0])
+        engine.playSoundById(0, decodedSounds);
     })
 }
