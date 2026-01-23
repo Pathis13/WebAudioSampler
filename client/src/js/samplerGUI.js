@@ -31,6 +31,7 @@ export class samplerGUI {
         order.forEach(element => {
             let button = document.createElement("button")
             let progress = document.createElement("progress")
+            progress.value = 0
             let buttonPlusProgress = document.createElement("div")
             buttonPlusProgress.id = element
             buttonPlusProgress.appendChild(button)
