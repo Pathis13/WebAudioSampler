@@ -30,8 +30,12 @@ export class samplerGUI {
         let order = [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3]
         order.forEach(element => {
             let button = document.createElement("button")
-            button.id = element
-            buttons.appendChild(button)
+            let progress = document.createElement("progress")
+            let buttonPlusProgress = document.createElement("div")
+            buttonPlusProgress.id = element
+            buttonPlusProgress.appendChild(button)
+            buttonPlusProgress.appendChild(progress)
+            buttons.appendChild(buttonPlusProgress)
         });
 
     }
@@ -39,9 +43,10 @@ export class samplerGUI {
     clearButtons(){
         let buttons = document.getElementById("buttons").children
         for (let i = 0; i < buttons.length; i++){
-            buttons[i].innerHTML = ""
-        } 
-        // remove event listeners
+            buttons[i].firstChild.innerHTML = ""
+        }
+        // remove event listeners   peut etre pas recloner les progress bar ?
+        this.sounds = []
         for (let item of buttons) {
             let new_item = item.cloneNode(true);
             item.parentNode.replaceChild(new_item, item);
@@ -57,7 +62,7 @@ export class samplerGUI {
     nameOnButtons(presetSamples){
         if (presetSamples != ""){
             presetSamples.forEach((element, i) => {
-                document.getElementById(i).innerHTML = element.name
+                document.getElementById(i).firstChild.innerHTML = element.name
             });
         }
     }
@@ -66,10 +71,11 @@ export class samplerGUI {
     bindButtonEvents(){
         let buttons = document.getElementById("buttons").children
         for (let item of buttons) {
-            if (item.innerHTML == "") continue; // skip unassigned buttons
-            item.addEventListener('click', () => {
-                this.buttonTrigger(item.id)
-            });
+            if (this.sounds[item.id]){
+                item.firstChild.addEventListener('click', () => {
+                    this.buttonTrigger(item.id)
+                });
+            } 
         }
     }
 
@@ -80,7 +86,7 @@ export class samplerGUI {
         this.sounds[slot].waveForm.drawWave(0, this.canvas.height);
         this.activeSoundIndex = slot;
         this.mouseEvents()
-        const btn = document.querySelector(`#buttons button[id='${slot}']`);
+        const btn = document.querySelector(`#buttons [id='${slot}']`).firstChild;
         if (btn) {
             btn.classList.add('active');
             setTimeout(() => btn.classList.remove('active'), 120);
@@ -109,7 +115,7 @@ export class samplerGUI {
     keyboardEvents(){
         document.addEventListener('keydown', (e) => {
             if (e.repeat) return;
-            if (e.code in this.KEY_TO_SLOT && this.sounds[this.KEY_TO_SLOT[e.code]] && document.querySelector(`#buttons button[id='${this.KEY_TO_SLOT[e.code]}']`).innerHTML!="") {
+            if (e.code in this.KEY_TO_SLOT && this.sounds[this.KEY_TO_SLOT[e.code]] ) {
                 const slot = this.KEY_TO_SLOT[e.code];
                 this.buttonTrigger(slot)
             }
