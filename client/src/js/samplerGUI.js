@@ -1,7 +1,7 @@
 import { SamplerEngine } from './samplerEngine.js';
-import WaveformDrawer from './waveformdrawer.js';
-import TrimbarsDrawer from './trimbarsdrawer.js';
-import Sound from './sound.js';
+import WaveformDrawer from './utils/waveformdrawer.js';
+import TrimbarsDrawer from './utils/trimbarsdrawer.js';
+import Sound from './utils/sound.js';
 
 export class samplerGUI {
     constructor() {
@@ -20,6 +20,7 @@ export class samplerGUI {
         };
         this.engine = new SamplerEngine();
         this.loadButtons()
+        this.keyboardEvents()
     }
 
 
@@ -32,7 +33,7 @@ export class samplerGUI {
             button.id = element
             buttons.appendChild(button)
         });
-        this.keyboardEvents()
+
     }
 
     clearButtons(){
@@ -52,6 +53,7 @@ export class samplerGUI {
         this.canvasOverlay = new_canvasOverlay;
     }
 
+
     nameOnButtons(presetSamples){
         if (presetSamples != ""){
             presetSamples.forEach((element, i) => {
@@ -59,6 +61,7 @@ export class samplerGUI {
             });
         }
     }
+
 
     bindButtonEvents(){
         let buttons = document.getElementById("buttons").children
@@ -69,6 +72,7 @@ export class samplerGUI {
             });
         }
     }
+
 
     buttonTrigger(slot){
         this.engine.playSound(this.sounds[slot])
@@ -83,6 +87,7 @@ export class samplerGUI {
         }
     }
 
+
     // create waveform and trimbars for a sound
     createSound(son){
         const wf = new WaveformDrawer();
@@ -92,6 +97,7 @@ export class samplerGUI {
         this.sounds.push(sound);
     }
 
+
     createSounds(decodedSounds){
         this.sounds = []
         decodedSounds.forEach(element => {
@@ -99,6 +105,7 @@ export class samplerGUI {
         });
     }
 
+    
     keyboardEvents(){
         document.addEventListener('keydown', (e) => {
             if (e.repeat) return;
@@ -114,7 +121,7 @@ export class samplerGUI {
     // mouse event listeners for ajusting the trim bars (code from tp)
     mouseEvents() {
         this.canvasOverlay.onmousemove = (evt) => {
-            console.log("mouse move")
+            // console.log("mouse move")
             // get the mouse position in the canvas
             let rect = this.canvas.getBoundingClientRect();
     

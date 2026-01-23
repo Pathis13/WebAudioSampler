@@ -1,5 +1,4 @@
-import { loadAndDecodeSound } from './soundutils.js';
-import { playSound } from './soundutils.js';
+import { loadAndDecodeSound, playSound } from './utils/soundutils.js';
 
 export class SamplerEngine {
     constructor() {
@@ -14,15 +13,16 @@ export class SamplerEngine {
             let url = this.PRESETS_URL + "/" + element.url.replace("./", "").replaceAll(" ", "%20")
             soundURLs.push(url)
         });
-            
         let promises = soundURLs.map(url => loadAndDecodeSound(url, this.ctx));
         decodedSounds = await Promise.all(promises);
         return decodedSounds
     }
 
+
     playSoundById(id, decodedSounds){
         playSound(this.ctx, decodedSounds[id], 0, decodedSounds[id].duration);
     }
+
 
     // play a Sound object
     playSound(sound){

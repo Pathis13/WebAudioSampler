@@ -19,11 +19,17 @@ Un sampler audio qui utilise une api pour récupérer les sons
 
 Pour utiliser le projet, il faut lancer le serveur avec node.js puis lancer le client avec Live Server
 
-#### Lancer le serveur  
-Installer les dépendances et lancer le serveur avec node.js  
+#### Instalation  
+Installer les dépendances  
 ```
 $ cd server
 $ npm i
+``` 
+
+#### Lancer le serveur  
+Lancer le serveur avec node.js  
+```
+$ cd server
 $ npm run dev
 ``` 
 

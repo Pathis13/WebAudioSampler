@@ -22,7 +22,6 @@ window.onload = async function init() {
 
 
     // preset select
-    presetSelect.innerHTML = '<option value="-1">Blank</option>';
     presets.forEach((p, i) => {
         const opt = document.createElement('option');
         opt.value = i;
@@ -41,6 +40,7 @@ window.onload = async function init() {
             gui.createSounds(decodedSounds);
             gui.bindButtonEvents()
         }
+        presetSelect.blur();
     }
     
 
