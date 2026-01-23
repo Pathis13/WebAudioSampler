@@ -1,4 +1,4 @@
-async function loadAndDecodeSound(url, ctx) {
+async function loadAndDecodeSound(url, ctx, index, updateProgressBar) {
     const response = await fetch(url);
 
     // code from https://fr.javascript.info/fetch-progress
@@ -15,9 +15,11 @@ async function loadAndDecodeSound(url, ctx) {
 
         chunks.push(value);
         receivedLength += value.length;
+        if (updateProgressBar) {
+            updateProgressBar(index, receivedLength, contentLength);
+        }
 
-
-        console.log(`Received ${receivedLength} of ${contentLength}`)
+        // console.log(`Received ${receivedLength} of ${contentLength}`)
     }
 
     // console.log("Sound loaded as arrayBuffer");

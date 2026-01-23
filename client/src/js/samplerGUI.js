@@ -46,11 +46,12 @@ export class samplerGUI {
         for (let i = 0; i < buttons.length; i++){
             buttons[i].firstChild.innerHTML = ""
         }
-        // remove event listeners   peut etre pas recloner les progress bar ?
+        // remove event listeners and reset progress bars
         this.sounds = []
         for (let item of buttons) {
-            let new_item = item.cloneNode(true);
-            item.parentNode.replaceChild(new_item, item);
+            let new_item = item.firstChild.cloneNode(true);
+            item.firstChild.parentNode.replaceChild(new_item, item.firstChild);
+            item.lastChild.value = 0
         }
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         // clone canvas overlay to remove trimbars
@@ -123,6 +124,12 @@ export class samplerGUI {
         });
     }
 
+    updateProgressBar(index, received, total){
+        const bar = document.querySelector(`#buttons [id='${index}']`).lastChild
+        bar.value = received;
+        bar.max = total;
+    }
+
 
 
     // mouse event listeners for ajusting the trim bars (code from tp)
@@ -167,12 +174,5 @@ export class samplerGUI {
 
         // redraw in 1/60th of a second
         requestAnimationFrame(this.animate.bind(this));
-    }
-
-
-
-
-    getEngine(){
-        return this.engine
     }
 }

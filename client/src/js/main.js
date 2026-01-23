@@ -1,4 +1,5 @@
 import { samplerGUI } from './samplerGUI.js';
+import { SamplerEngine } from './samplerEngine.js';
 
 const API_BASE = 'http://localhost:3000';
 
@@ -6,7 +7,7 @@ let decodedSounds = []
 
 window.onload = async function init() {
     const gui = new samplerGUI();
-    const engine = gui.getEngine();
+    const engine = new SamplerEngine();
 
     const presetSelect = document.querySelector('#presetSelect');
 
@@ -34,7 +35,7 @@ window.onload = async function init() {
     presetSelect.onchange = async function (e) {
         gui.clearButtons()
         if (this.value >= 0){
-            decodedSounds = await engine.loadPresetSamples(presets[this.value])
+            decodedSounds = await engine.loadPresetSamples(presets[this.value], gui.updateProgressBar)
             presetSamples = presets[this.value].samples
             gui.nameOnButtons(presetSamples)
             gui.createSounds(decodedSounds);

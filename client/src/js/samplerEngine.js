@@ -6,14 +6,14 @@ export class SamplerEngine {
         this.PRESETS_URL = 'http://localhost:3000/presets';
     }
 
-    async loadPresetSamples(preset) {
+    async loadPresetSamples(preset, updateProgressBar) {
         let soundURLs = []
         let decodedSounds = []
         preset.samples.forEach(element => {
             let url = this.PRESETS_URL + "/" + element.url.replace("./", "").replaceAll(" ", "%20")
             soundURLs.push(url)
         });
-        let promises = soundURLs.map(url => loadAndDecodeSound(url, this.ctx));
+        let promises = soundURLs.map((url, index) => loadAndDecodeSound(url, this.ctx, index, updateProgressBar));
         decodedSounds = await Promise.all(promises);
         return decodedSounds
     }
