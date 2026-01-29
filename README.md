@@ -16,30 +16,30 @@ Un sampler audio qui utilise une api pour récupérer les sons
 - Bouton pour charger un preset et jouer un son sans interface graphique
 - Catégories de presets
 - Barres de progression animées lors du chargement des presets
-- Possibilité de charger des sons exterieur au serveur via une URL externe
+- Possibilité de charger des sons extérieurs au serveur via une URL externe, exemple : `https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-a4.wav`
 
 ## Utilisation  
 
 Pour utiliser le projet, il faut lancer le serveur avec node.js puis lancer le client avec Live Server
 
-#### Instalation  
+### Installation  
 Installer les dépendances  
 ```
 $ cd server
 $ npm i
 ``` 
 
-#### Lancer le serveur  
+### Lancer le serveur  
 Lancer le serveur avec node.js  
 ```
 $ cd server
 $ npm run dev
 ``` 
 
-#### Lancer le client  
+### Lancer le client  
 Ouvrir client\src\index.html avec Live Server  
 
 
-#### Utilisation de l'IA
+## Utilisation de l'IA
 
-Utilisation de chatgpt pour ajouter updateProgressBar dans loadAndDecodeSound() de soundutils.js (pour mettre à jour les barres de progression depuis le gui au lieu de le faire dans soundutils.js)(on passe une fonction en paramètre et on l'appelle plus tard)
+Utilisation de chatgpt pour ajouter updateProgressBar dans loadAndDecodeSound() de soundutils.js (pour mettre à jour les barres de progression depuis le gui au lieu de le faire dans soundutils.js) (on passe une fonction en paramètre et on l'appelle plus tard)
