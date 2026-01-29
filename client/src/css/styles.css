@@ -1,3 +1,10 @@
+:root {
+  --color1: #E0FBE2;
+  --color2: #c9f6cc;
+  --color3: #B0EBB4;
+  --color4: #638d65;
+}
+
 * {
     font-family: Arial, Helvetica, sans-serif;
     user-select: none;
@@ -7,8 +14,9 @@
     width: 640px;
     height: 380px;
     padding: 10px;
-    background-color: #b2ffb2;
-    border: 2px solid #000000;
+    margin: 10px;
+    background: repeating-linear-gradient(135deg, var(--color1) 0px, var(--color1) 80px, var(--color2) 80px, var(--color2) 160px);
+    border: 2px solid var(--color4);
     border-radius: 15px;
     display: flex;
     gap: 12px;
@@ -29,19 +37,23 @@
     width: 74px;
     height: 74px;
     font-size: 13px;
-    background: #6de7ff;
+    background-color: var(--color3);
     color: #000000;
-    border: 3px solid #1c1c1c;
+    border: 3px solid var(--color4);
     cursor: pointer;
     border-radius: 15%;
 }
 
 #buttons button:focus:active {
-    background: #00bfff;
+    background: var(--color4);
 }
 
 #buttons button.active {
-    background: #00bfff;
+    background: var(--color4);
+}
+
+#buttons > div{
+    text-align: center;
 }
 
 
@@ -70,7 +82,7 @@
 }
 
 #myCanvasOverlay {
-    border-color: #2dd52d;
+    border-color: var(--color4);
     z-index: 10;
 }
 
@@ -84,7 +96,22 @@
     max-width: 300px;
 }
 
-#buttons progress {
+progress {
     width: 70px;
-    height: 15px;
+    height: 8px;
+    margin-top: 3px;
+    margin-bottom: 4px;
+    -webkit-appearance: 'none';
+    appearance: none;
+}
+
+progress::-webkit-progress-bar {
+    background-color: var(--color3);
+    border: 1px solid var(--color4);
+    border-radius: 30px;
+}
+
+progress::-webkit-progress-value {
+    background: var(--color4);
+    border-radius: 30px;
 }

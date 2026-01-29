@@ -139,10 +139,10 @@ export default class TrimbarsDrawer {
         this.highLightTrimBarsWhenClose(mousePos);
 
         // We limit the trim bars to stay in the canvas
-        if (mousePos.x <= 0) {
+        if (mousePos.x <= 0 && this.leftTrimBar.dragged) {
             this.leftTrimBar.x = 0;
         }
-        if (mousePos.x >= this.canvas.width) {
+        if (mousePos.x >= this.canvas.width && this.rightTrimBar.dragged) {
             this.rightTrimBar.x = this.canvas.width;
         }
 

@@ -101,7 +101,7 @@ export class samplerGUI {
         const wf = new WaveformDrawer();
         const tb = new TrimbarsDrawer(this.canvasOverlay, 0, this.canvasOverlay.width);
         const sound = new Sound(wf, tb, son, this.canvas);
-        sound.init('#83E83E');
+        sound.init('#B0EBB4');
         this.sounds.push(sound);
     }
 
