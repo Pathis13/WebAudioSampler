@@ -14,6 +14,9 @@ Un sampler audio qui utilise une api pour récupérer les sons
 - Trim bars qui permettent de contrôler la longueur de chaque son  
 - Possibilité d'interagir avec le pad via les touches de clavier (1234  AZER  QSDF  WXCV)  
 - Bouton pour charger un preset et jouer un son sans interface graphique
+- Catégories de presets
+- Barres de progression animées lors du chargement des presets
+- Possibilité de charger des sons exterieur au serveur via une URL externe
 
 ## Utilisation  
 
@@ -35,3 +38,8 @@ $ npm run dev
 
 #### Lancer le client  
 Ouvrir client\src\index.html avec Live Server  
+
+
+#### Utilisation de l'IA
+
+Utilisation de chatgpt pour ajouter updateProgressBar dans loadAndDecodeSound() de soundutils.js (pour mettre à jour les barres de progression depuis le gui au lieu de le faire dans soundutils.js)(on passe une fonction en paramètre et on l'appelle plus tard)
