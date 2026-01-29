@@ -46,7 +46,16 @@ async function loadSamplesInMemory(preset, presetList) {
     
     // Fisrt, compute an array with sample URLs
     if (preset.samples && preset.samples.length > 0) {
-        const sampleUrls = preset.samples.map(sample => "presets/" + sample.url);
+        let sampleUrls = []
+        preset.samples.forEach(element => {
+            if (element.url.substring(0,4) == 'http'){
+                sampleUrls.push(element.url)
+            }
+            else{
+                sampleUrls.push("presets/" + element.url)
+            }
+        })
+        // const sampleUrls = preset.samples.map(sample => "presets/" + sample.url);
         console.log("Sample URLs:", sampleUrls);
 
         // Use promise.all to fetch all samples as array buffers

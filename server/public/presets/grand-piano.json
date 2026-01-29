@@ -1,0 +1,58 @@
+{
+  "id": "4d53952d-ee02-4e5e-bb68-bd539182b218",
+  "slug": "grand-piano",
+  "updatedAt": "2026-01-28T16:38:34.504Z",
+  "name": "Grand Piano",
+  "type": "Orchestra",
+  "isFactoryPresets": true,
+  "samples": [
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-a4.wav",
+      "name": "piano A4"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-a5.wav",
+      "name": "piano A5"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-a6.wav",
+      "name": "piano A6"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-c4.wav",
+      "name": "piano C4"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-c5.wav",
+      "name": "piano C5"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-c6.wav",
+      "name": "piano C6"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-ds4.wav",
+      "name": "piano D#4"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-ds5.wav",
+      "name": "piano D#5"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-ds6.wav",
+      "name": "piano D#6"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-fs4.wav",
+      "name": "piano F#4"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-fs5.wav",
+      "name": "piano F#5"
+    },
+    {
+      "url": "https://mainline.i3s.unice.fr/WamSampler/audio/Grand%20Piano/piano-f-fs6.wav",
+      "name": "piano F#6"
+    }
+  ]
+}

@@ -10,8 +10,12 @@ export class SamplerEngine {
         let soundURLs = []
         let decodedSounds = []
         preset.samples.forEach(element => {
-            let url = this.PRESETS_URL + "/" + element.url.replace("./", "").replaceAll(" ", "%20")
-            soundURLs.push(url)
+            if (element.url.substring(0,4) == 'http'){
+                soundURLs.push(element.url)
+            }
+            else{
+                soundURLs.push(this.PRESETS_URL + "/" + element.url)
+            }
         });
         let promises = soundURLs.map((url, index) => loadAndDecodeSound(url, this.ctx, index, updateProgressBar));
         decodedSounds = await Promise.all(promises);

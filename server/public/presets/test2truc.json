@@ -1,0 +1,18 @@
+{
+  "id": "35a13c3c-6225-47e3-92f7-0d0c6dad4cfb",
+  "slug": "test2truc",
+  "updatedAt": "2026-01-28T16:12:28.162Z",
+  "name": "test2truc",
+  "type": "t",
+  "isFactoryPresets": true,
+  "samples": [
+    {
+      "url": "./basic-kit/kick.wav",
+      "name": "kick"
+    },
+    {
+      "url": "./basic-kit/tom1.wav",
+      "name": "tom1"
+    }
+  ]
+}
