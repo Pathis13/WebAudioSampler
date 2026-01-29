@@ -21,14 +21,40 @@ window.onload = async function init() {
         presets = [];
     }
 
+    buildPresetMenuWithGroups();
 
-    // preset select
-    presets.forEach((p, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = p.name;
-        presetSelect.appendChild(opt);
-    });
+    // code from M1InfoWebTechnos2025_2026\Seance5\ClientWithDynamicDropDownMenu
+    function buildPresetMenuWithGroups() {
+        // Build an option group for each category
+        const categories = {};
+
+        // First, group presets by category
+        presets.forEach((preset, index) => {
+            const category = preset.type || "Uncategorized";
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+            categories[category].push({ preset, index });
+        });
+
+        for (const [category, items] of Object.entries(categories)) {
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = category;
+
+            items.forEach(({ preset, index }) => {
+                const option = document.createElement("option");
+                option.value = index;
+                option.text = preset.name;
+                if (option.text == "blank"){
+                    option.selected = true
+                }
+                optgroup.appendChild(option);
+            });
+
+            presetSelect.appendChild(optgroup);
+        }
+    }
+
 
     // load preset and show name on buttons when select option
     let presetSamples = []

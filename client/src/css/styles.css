@@ -81,6 +81,7 @@
 
 #presetSelect {
     border-radius: 5px;
+    max-width: 300px;
 }
 
 #buttons progress {
